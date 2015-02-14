@@ -3,7 +3,7 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = Jot;
   else root.Jot = Jot;
 
-  Jot.Task = Task = function (context) {
+  var Task = Jot.Task = function (context) {
     this.context = context || {};
     this.props = {
       i: null,
@@ -61,7 +61,7 @@
 
     if (i) {
       if (into) {
-        into.innerHTML = escapeTags(i.toString());
+        into.innerHTML = cleanInput(i);
       }
       if (outo) {
         var output = this.props.o = tryCatch(i, this.context);
@@ -77,7 +77,7 @@
     return this;
   };
 
-  Jot.TaskSet = TaskSet = function () {
+  var TaskSet = Jot.TaskSet = function () {
     this.context = {};
     this.tasks = [];
     return this;
@@ -115,6 +115,24 @@
     string = string.replace(/</g, '&lt;');
     string = string.replace(/>/g, '&gt;');
     return string;
+  }
+
+  function cleanInput (input) {
+    var start = /^function[A-z\s]\([\s]*\)[\s]*\{\n*/, // Matches the beginning of a function "function xyz () {".
+        end = /[\n\s]*\}$/, // Matches the end of a function " }".
+        indent = /^[\s]+/, // Matches the first indentation.
+        cleaned = escapeTags(input.toString());
+
+    cleaned = cleaned.replace(start, '');
+    cleaned = cleaned.replace(end, '');
+
+    var indents = cleaned.match(indent);
+    if (indents) {
+      // If we find an indent, clean it from each line.
+      var baseIndent = new RegExp('^' + indents[0], 'gm');
+      cleaned = cleaned.replace(baseIndent, '');
+    }
+    return cleaned;
   }
 
   function tryCatch (fn, ctx) {

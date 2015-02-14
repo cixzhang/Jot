@@ -74,84 +74,81 @@
       <div class="task1">
         <p>Run any code.</p>
       </div>
-<script type="text/javascript">
-var notebook = new Jot.TaskSet();
+      <script type="text/javascript">
+        var notebook = new Jot.TaskSet();
 
-var task1 = notebook.createTask('.task1')
-    .run(function () { return 1; });
-</script>
+        var task1 = notebook.createTask('.task1')
+            .run(function () { return 1; });
+      </script>
 
       <div class="task2">
         <p>You can set variables to the context...</p>
       </div>
-<script type="text/javascript">
-var task2 = notebook.createTask('.task2')
-    .run(function () { this.a = 'hello'; });
-</script>
+      <script type="text/javascript">
+        var task2 = notebook.createTask('.task2')
+            .run(function () { this.a = 'hello'; });
+      </script>
 
       <div class="task3">
         <p>...then access them in a different task in the same task set.</p>
       </div>
-<script type="text/javascript">
-var task3 = notebook.createTask('.task3')
-    .run(
-function () {
-  this.a += ' world';
-  return this.a;
-});
-</script>
+      <script type="text/javascript">
+        var task3 = notebook.createTask('.task3')
+            .run(function () {
+              this.a += ' world';
+              return this.a;
+            });
+      </script>
 
       <div class="task4">
         <p>Tasks not in the task set won't share the context.</p>
       </div>
-<script type="text/javascript">
-var lonely = new Jot.Task();
-lonely.invade('.task4')
-    .run(
-function () {
-  this.a = this.a ? this.a : '';
-  this.a += '&gt;:(';
-  return this.a;
-});
-</script>
+      <script type="text/javascript">
+        var lonely = new Jot.Task();
+        lonely.invade('.task4')
+            .run(function () {
+              this.a = this.a ? this.a : '';
+              this.a += '&gt;:(';
+              return this.a;
+            });
+      </script>
 
       <div class="task5">
         <p>You can also output HTML strings or Elements.</p>
       </div>
-<script type="text/javascript">
-var task5 = notebook.createTask('.task5')
-    .run(
-function () {
-  this.a += ' :)';
-  return '<b>' + this.a + '</b>';
-});
+      <script type="text/javascript">
+        var task5 = notebook.createTask('.task5')
+            .run(function () {
+              this.a += ' :)';
+              return '<b>' + this.a + '</b>';
+            });
 
-task5.outo().classList.add('language-none');
-</script>
+        task5.outo().classList.add('language-none');
+      </script>
 
 
       <div class="task6">
         <p>Now for some crazy nesting.</p>
       </div>
-<script type="text/javascript">
-var nest = new Jot.Task();
+        <script type="text/javascript">
+        var nest = new Jot.Task();
 
-nest.invade('.task6');
-nest.i(function () {
-  var div = document.createElement('div');
+        nest.invade('.task6');
+        nest.i(function () {
+          var div = document.createElement('div');
 
-  // Create a TaskSet
-  var taskSet = new Jot.TaskSet();
-  // Create a task in the taskset.
-  var task = taskSet.createTask(div)      // The task will print itself in div.
-      .run(function () { return ':P'; }); // Run the task with your input.
-                                          // The output will be the return value.
-  return div;
-});
+          // Create a TaskSet
+          var taskSet = new Jot.TaskSet();
+          // Create a task in the taskset.
+          var task = taskSet.createTask(div)      // The task will print itself in div.
+              .run(function () { return ':P'; }); // Run the task with your input.
+                                                  // The output will be the return value.
+          return div;
+        });
 
-nest.run();
-nest.outo().classList.add('language-none');
-</script>
+        nest.run();
+        nest.outo().classList.add('language-none');
+      </script>
 
     </div>
 
