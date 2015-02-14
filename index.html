@@ -133,9 +133,13 @@ var nest = new Jot.Task();
 
 nest.invade('.task6');
 nest.instruct(function () {
-  var taskSet = new Jot.TaskSet();
   var div = document.createElement('div');
+
+  // Create a TaskSet
+  var taskSet = new Jot.TaskSet();
+  // Create a task in the taskset, then run your function
   var task = taskSet.createTask(div).run(function () { return ':P'; });
+
   return div;
 });
 
