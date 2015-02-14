@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="assets/prism.css" />
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #fafafa;
+      }
+
+      div.intro {
+        text-align: center;
+        font-size: 1.25rem;
+        padding-top: 1rem;
+      }
+
+      div.examples, div.intro {
+        margin: auto;
+        padding-bottom: 1rem;
+        max-width: 800px;
+      }
+
+      div[class^="task"] {
+        margin-bottom: 2rem;
+      }
+
+      div[class^="task"]:last-of-type {
+        margin-bottom: 0;
+      }
+
+      div[class^="task"] > pre {
+        position: relative;
+        left: 2rem;
+        overflow: visible;
+        width: calc(100% - 2rem);
+        border-radius: 0.2rem;
+      }
+
+      div[class^="task"] > pre:first-of-type {
+        opacity: 0.55;
+      }
+
+      div[class^="task"] > pre::before {
+        position: absolute;
+        left: -2rem;
+        width: 2rem;
+        font-family: 'Open Sans', sans-serif;
+        text-align: center;
+        color: #d5c2b5;
+      }
+
+      div[class^="task"] > pre:first-of-type::before {
+        content: "I";
+      }
+
+      div[class^="task"] > pre:last-of-type::before {
+        content: "O";
+      }
+    </style>
+  </head>
+  <body class="language-javascript">
+    <script type="text/javascript" src="jot.js"></script>
+    <div class="intro">
+      <h1>Jot</h1>
+      <span>Display javascript IO inline.</span>
+    </div>
+    <div class="examples">
+      <div class="task1">
+        <p>Run some code:</p>
+      </div>
+<script type="text/javascript">
+var notebook = new Jot.TaskSet();
+
+var task1 = notebook.createTask('.task1')
+    .run(function () { return 1; });
+</script>
+
+      <div class="task2">
+        <p>You can set variables to the context...</p>
+      </div>
+<script type="text/javascript">
+var task2 = notebook.createTask('.task2')
+    .run(function () { this.a = 'hello'; });
+</script>
+
+      <div class="task3">
+        <p>...then access them in a different task in the same task set.</p>
+      </div>
+<script type="text/javascript">
+var task3 = notebook.createTask('.task3')
+    .run(
+function () {
+  this.a += ' world';
+  return this.a;
+});
+</script>
+
+      <div class="task4">
+        <p>Tasks not in the task set won't share the context.</p>
+      </div>
+<script type="text/javascript">
+var lonely = new Jot.Task();
+lonely.invade('.task4')
+    .run(
+function () {
+  this.a = this.a ? this.a : '';
+  this.a += '&gt;:(';
+  return this.a;
+});
+</script>
+
+      <div class="task5">
+        <p>You can also output HTML strings or element objects.</p>
+      </div>
+<script type="text/javascript">
+var task5 = notebook.createTask('.task5')
+    .run(
+function () {
+  this.a += ' :)';
+  return '<b>' + this.a + '</b>';
+});
+
+task5.outo().classList.add('language-none');
+</script>
+    </div>
+
+    <script type="text/javascript" src="assets/prism.js"></script>
+  </body>
+</html>
