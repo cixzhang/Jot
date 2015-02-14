@@ -59,6 +59,7 @@
         into.innerHTML = escapeTags(fn.toString());
       }
       if (outo) {
+        outo.innerHTML = '';
         var output = tryCatch(fn, this.context);
         if (output instanceof Element) {
           outo.appendChild(output);
