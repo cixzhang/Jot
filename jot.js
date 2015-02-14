@@ -6,11 +6,22 @@
   Jot.Task = Task = function (context) {
     this.context = context || {};
     this.props = {
-      fn: null,
+      i: null,
+      o: null,
       into: null,
       outo: null
     };
     return this;
+  };
+
+  Task.prototype.i = function (fn) {
+    if (typeof fn === 'undefined') return this.props.i;
+    this.props.i = fn;
+    return this;
+  };
+
+  Task.prototype.o = function (o) {
+    return this.props.o;
   };
 
   Task.prototype.into = function (el) {
@@ -42,26 +53,20 @@
     return this;
   };
 
-  Task.prototype.instruct = function (fn) {
-    if (typeof fn === 'undefined') return this.props.fn;
-    this.props.fn = fn;
-    return this;
-  };
-
   Task.prototype.run = function (newFn) {
-    if (newFn) this.instruct(newFn);
-    var fn = this.instruct(),
+    if (newFn) this.i(newFn);
+    var i = this.i(),
         into = this.into(),
         outo = this.outo();
 
-    if (fn) {
+    if (i) {
       if (into) {
-        into.innerHTML = escapeTags(fn.toString());
+        into.innerHTML = escapeTags(i.toString());
       }
       if (outo) {
-        outo.innerHTML = '';
-        var output = tryCatch(fn, this.context);
+        var output = this.props.o = tryCatch(i, this.context);
         if (output instanceof Element) {
+          outo.innerHTML = '';
           outo.appendChild(output);
         } else {
           if (!detectTags(output)) output = JSON.stringify(output);

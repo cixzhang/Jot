@@ -61,12 +61,16 @@
     </style>
   </head>
   <body class="language-javascript">
+
     <script type="text/javascript" src="jot.js"></script>
+
     <div class="intro">
       <h1>JOT</h1>
       <span>Display javascript IO inline.</span>
     </div>
+
     <div class="examples">
+
       <div class="task1">
         <p>Run any code.</p>
       </div>
@@ -133,20 +137,22 @@ task5.outo().classList.add('language-none');
 var nest = new Jot.Task();
 
 nest.invade('.task6');
-nest.instruct(function () {
+nest.i(function () {
   var div = document.createElement('div');
 
   // Create a TaskSet
   var taskSet = new Jot.TaskSet();
-  // Create a task in the taskset, then run your function
-  var task = taskSet.createTask(div).run(function () { return ':P'; });
-
+  // Create a task in the taskset.
+  var task = taskSet.createTask(div)      // The task will print itself in div.
+      .run(function () { return ':P'; }); // Run the task with your input.
+                                          // The output will be the return value.
   return div;
 });
 
 nest.run();
 nest.outo().classList.add('language-none');
 </script>
+
     </div>
 
     <script type="text/javascript" src="assets/prism.js"></script>
