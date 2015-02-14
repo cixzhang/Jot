@@ -120,6 +120,7 @@
         var task1 = notebook.createTask('.task1')
             .run(function () {
               var task = new Jot.Task();
+
               task.invade(div) // The task will render itself into the container we specify.
                   .run(function () { return 1; }); // Run the input. Output is the return value.
               
@@ -226,7 +227,7 @@
       </script>
 
       <div class="task6">
-        <p>Setup input before running:</p>
+        <p>Don't want to run right away? Setup input before running:</p>
       </div>
       <script type="text/javascript">
         var div = document.createElement('div');
@@ -257,7 +258,7 @@
       </script>
 
       <div class="task7">
-        <p>Grab the output after running:</p>
+        <p>Get the output after running:</p>
       </div>
       <script type="text/javascript">
         var task7 = notebook.createTask('.task7')
