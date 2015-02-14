@@ -60,11 +60,11 @@
         outo = this.outo();
 
     if (i) {
+      var output = this.props.o = tryCatch(i, this.context);
       if (into) {
         into.innerHTML = cleanInput(i);
       }
       if (outo) {
-        var output = this.props.o = tryCatch(i, this.context);
         if (output instanceof Element) {
           outo.innerHTML = '';
           outo.appendChild(output);

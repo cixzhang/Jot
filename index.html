@@ -4,22 +4,37 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="assets/prism.css" />
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: 'Open Sans', sans-serif;
         background-color: #fafafa;
       }
 
-      div.intro {
+      a {
+        color: #4695cd;
+        text-decoration: none;
+      }
+
+      div.intro, div.examples, div.thanks {
         margin: auto;
-        max-width: 800px;
+        width: 800px;
+      }
+
+      div.intro {
         text-align: center;
         font-size: 1.25rem;
       }
 
       div.examples {
-        margin: auto;
         margin-bottom: 4rem;
-        max-width: 800px;
+      }
+
+      div.thanks {
+        text-align: center;
+        margin-bottom: 2rem;
       }
 
       div[class^="task"] {
@@ -35,7 +50,13 @@
         left: 2rem;
         overflow: visible;
         width: calc(100% - 2rem);
-        border-radius: 0.2rem;
+        border-radius: 0.4rem;
+      }
+
+      div[class^="task"] pre code { overflow: auto; }
+
+      div[class^="task"] pre:not(.language-javascript) {
+        border-left: 2px dotted #ccc;
       }
 
       div[class^="task"] pre:first-of-type {
@@ -44,8 +65,12 @@
 
       div[class^="task"] pre::before {
         position: absolute;
+        top: 0;
         left: -2rem;
+        bottom: 0;
         width: 2rem;
+        height: 2rem;
+        margin: auto;
         font-family: 'Open Sans', sans-serif;
         text-align: center;
         color: #d5c2b5;
@@ -58,6 +83,19 @@
       div[class^="task"] pre:last-of-type::before {
         content: "O";
       }
+
+      textarea {
+        height: 5rem;
+        width: calc(50% - 1rem);
+        vertical-align: center;
+        padding: 0.5rem;
+        margin: 1rem 0 1rem 1rem;
+        resize: none;
+        font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        font-size: 1rem;
+        border: 1px solid #cfcfcf;
+        border-radius: 0.2rem;
+      }
     </style>
   </head>
   <body class="language-javascript">
@@ -67,89 +105,210 @@
     <div class="intro">
       <h1>JOT</h1>
       <span>Display javascript IO inline.</span>
+      <a href="https://github.com/cixzhang/Jot">Source</a>
     </div>
 
     <div class="examples">
 
       <div class="task1">
-        <p>Run any code.</p>
+        <p>Create a <strong>Jot.Task</strong> and run it:</p>
       </div>
       <script type="text/javascript">
         var notebook = new Jot.TaskSet();
+        var div = document.createElement('div');
 
         var task1 = notebook.createTask('.task1')
-            .run(function () { return 1; });
+            .run(function () {
+              var task = new Jot.Task();
+              task.invade(div) // The task will render itself into the container we specify.
+                  .run(function () { return 1; }); // Run the input. Output is the return value.
+              
+              return div; // boilerplate for these examples
+            });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task1.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        div.classList.add('language-javascript');
       </script>
 
       <div class="task2">
-        <p>You can set variables to the context...</p>
+        <p>Create a <strong>Jot.TaskSet</strong>:</p>
       </div>
       <script type="text/javascript">
+        var taskSet = null;
+        var div = document.createElement('div');
+
         var task2 = notebook.createTask('.task2')
-            .run(function () { this.a = 'hello'; });
+            .run(function () {
+              var taskSet = new Jot.TaskSet();
+              return taskSet;
+            });
+
+        taskSet = task2.o(); // Grab that output!
       </script>
 
       <div class="task3">
-        <p>...then access them in a different task in the same task set.</p>
+        <p>TaskSets are useful if you need to share context between tasks:</p>
       </div>
       <script type="text/javascript">
+        var div = document.createElement('div');
         var task3 = notebook.createTask('.task3')
             .run(function () {
-              this.a += ' world';
-              return this.a;
+              var task = taskSet.createTask(); // Create a task in the taskSet.
+
+              task.invade(div)     // Like before, we invade a new div.
+                  .run(function () {
+                    // Set an attribute onto the context. We'll access it later.
+                    this.a = 'hello';
+                    return false;
+                  });
+
+              return div; // boilerplate
             });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task3.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        div.classList.add('language-javascript');
       </script>
 
       <div class="task4">
-        <p>Tasks not in the task set won't share the context.</p>
+        <p>You can access an attribute set in previous tasks of the same taskSet:</p>
       </div>
       <script type="text/javascript">
-        var lonely = new Jot.Task();
-        lonely.invade('.task4')
+        var div = document.createElement('div');
+        var task4 = notebook.createTask('.task4')
             .run(function () {
-              this.a = this.a ? this.a : '';
-              this.a += '&gt;:(';
-              return this.a;
+              taskSet.createTask(div) // Invasion shorthand.
+                  .run(function () {
+                    this.a += ' world';
+                    return this.a; // This should print "hello world".
+                  });
+
+              return div; // boilerplate
             });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task4.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        div.classList.add('language-javascript');
       </script>
 
       <div class="task5">
-        <p>You can also output HTML strings or Elements.</p>
+        <p>You can also output HTML strings or Elements:</p>
       </div>
       <script type="text/javascript">
+        var div = document.createElement('div');
         var task5 = notebook.createTask('.task5')
             .run(function () {
-              this.a += ' :)';
-              return '<b>' + this.a + '</b>';
+              taskSet.createTask(div)
+                  .run(function () {
+                    this.a += ' :)';
+                    return '<b>' + this.a + '</b>';
+                  });
+
+              return div; // Hey, that's what this is!
             });
 
+        // Suppress prism.js for this output since it's an HTML Element.
         task5.outo().classList.add('language-none');
-      </script>
 
+        // Add the language to the div so prism.js will parse it.
+        div.classList.add('language-javascript');
+
+        // And suppress it for the output's output.
+        div.getElementsByTagName('pre').item(1).classList.add('language-none');
+
+      </script>
 
       <div class="task6">
-        <p>Now for some crazy nesting.</p>
+        <p>Setup input before running:</p>
       </div>
-        <script type="text/javascript">
-        var nest = new Jot.Task();
+      <script type="text/javascript">
+        var div = document.createElement('div');
+        var task6 = notebook.createTask('.task6')
+            .run(function () {
+              var task = new Jot.Task().invade(div);
+              var jars = null;
 
-        nest.invade('.task6');
-        nest.i(function () {
-          var div = document.createElement('div');
+              // Setup the input without running.
+              task.i(function () {
+                jars.push('pickles');
+                return jars;
+              });
 
-          // Create a TaskSet
-          var taskSet = new Jot.TaskSet();
-          // Create a task in the taskset.
-          var task = taskSet.createTask(div)      // The task will print itself in div.
-              .run(function () { return ':P'; }); // Run the task with your input.
-                                                  // The output will be the return value.
-          return div;
-        });
+              jars = [];
 
-        nest.run();
-        nest.outo().classList.add('language-none');
+              // Now run the task.
+              task.run();
+
+              return div;
+            });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task6.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        div.classList.add('language-javascript');
       </script>
 
+      <div class="task7">
+        <p>Grab the output after running:</p>
+      </div>
+      <script type="text/javascript">
+        var task7 = notebook.createTask('.task7')
+            .run(function () {
+              // We don't want to render this task, so we won't invade.
+              var task = new Jot.Task()
+                  .run(function () {
+                    var cat = 'meow';
+                    return cat;
+                  });
+
+              return task.o();
+            });
+      </script>
+
+      <div class="task8">
+        <p>You can specify where a task should render its input and/or output:</p>
+      </div>
+      <script type="text/javascript">
+        var task8 = notebook.createTask('.task8')
+            .run(function () {
+              // Creating a few containers.
+              var div = document.createElement('div'),
+                  iArea = document.createElement('textarea'),
+                  oArea = document.createElement('textarea');
+
+              var task = new Jot.Task()
+                  .into(iArea) // Input goes in the input textarea.
+                  .outo(oArea) // Output goes in the output textarea.
+                  .run(function () {
+                    function sum (a, b) { return a + b; }
+                    return sum(1, 2);
+                  });
+
+              div.appendChild(iArea);
+              div.appendChild(oArea);
+
+              return div;
+            });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task8.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        task8.o().classList.add('language-javascript');
+      </script>
+    </div>
+
+    <div class="thanks">
+      <span>Inspired by <a href="http://ipython.org/notebook.html">IPython Notebook</a>.</span>
+      <span>Syntax highlighting by <a href="http://prismjs.com/">Prism.js</a>.</span>
     </div>
 
     <script type="text/javascript" src="assets/prism.js"></script>
