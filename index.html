@@ -22,14 +22,14 @@
       }
 
       div[class^="task"] {
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
       }
 
       div[class^="task"]:last-of-type {
         margin-bottom: 0;
       }
 
-      div[class^="task"] > pre {
+      div[class^="task"] pre {
         position: relative;
         left: 2rem;
         overflow: visible;
@@ -37,11 +37,11 @@
         border-radius: 0.2rem;
       }
 
-      div[class^="task"] > pre:first-of-type {
+      div[class^="task"] pre:first-of-type {
         opacity: 0.55;
       }
 
-      div[class^="task"] > pre::before {
+      div[class^="task"] pre::before {
         position: absolute;
         left: -2rem;
         width: 2rem;
@@ -50,11 +50,11 @@
         color: #d5c2b5;
       }
 
-      div[class^="task"] > pre:first-of-type::before {
+      div[class^="task"] pre:first-of-type::before {
         content: "I";
       }
 
-      div[class^="task"] > pre:last-of-type::before {
+      div[class^="task"] pre:last-of-type::before {
         content: "O";
       }
     </style>
@@ -62,12 +62,12 @@
   <body class="language-javascript">
     <script type="text/javascript" src="jot.js"></script>
     <div class="intro">
-      <h1>Jot</h1>
+      <h1>JOT</h1>
       <span>Display javascript IO inline.</span>
     </div>
     <div class="examples">
       <div class="task1">
-        <p>Run some code:</p>
+        <p>Run any code.</p>
       </div>
 <script type="text/javascript">
 var notebook = new Jot.TaskSet();
@@ -111,7 +111,7 @@ function () {
 </script>
 
       <div class="task5">
-        <p>You can also output HTML strings or element objects.</p>
+        <p>You can also output HTML strings or Elements.</p>
       </div>
 <script type="text/javascript">
 var task5 = notebook.createTask('.task5')
@@ -122,6 +122,25 @@ function () {
 });
 
 task5.outo().classList.add('language-none');
+</script>
+
+
+      <div class="task6">
+        <p>Now for some crazy nesting.</p>
+      </div>
+<script type="text/javascript">
+var nest = new Jot.Task();
+
+nest.invade('.task6');
+nest.instruct(function () {
+  var taskSet = new Jot.TaskSet();
+  var div = document.createElement('div');
+  var task = taskSet.createTask(div).run(function () { return ':P'; });
+  return div;
+});
+
+nest.run();
+nest.outo().classList.add('language-none');
 </script>
     </div>
 

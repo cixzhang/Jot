@@ -60,8 +60,12 @@
       }
       if (outo) {
         var output = tryCatch(fn, this.context);
-        if (!detectTags(output)) output = JSON.stringify(output);
-        outo.innerHTML = output;
+        if (output instanceof Element) {
+          outo.appendChild(output);
+        } else {
+          if (!detectTags(output)) output = JSON.stringify(output);
+          outo.innerHTML = output;
+        }
       }
     }
     return this;
@@ -96,8 +100,7 @@
 
   function detectTags (string) {
     var hasTags = false;
-    if (string instanceof Element) hasTags = true;
-    else if (typeof string === 'string')
+    if (typeof string === 'string')
       hasTags = escapeTags(string).length !== string.length;
     return hasTags;
   }
