@@ -136,11 +136,19 @@
 
         var task1 = notebook.createTask('.task1')
             .run(function () {
+              // Create a new task.
               var task = new Jot.Task();
 
-              task.invade(div) // The task will render itself into the container we specify.
-                  .run(function () { return 1; }); // Run the input. Output is the return value.
-              
+              // We provide the task a div (or any container).
+              // The task will render its input and output into this div.
+              task.invade(div)
+
+              // Run the task with the input function.
+              task.run(function () {
+                // This return value is rendered in the output.
+                return 1;
+              });
+
               return div; // boilerplate for these examples
             });
 
@@ -160,6 +168,8 @@
 
         var task2 = notebook.createTask('.task2')
             .run(function () {
+              // Create a new taskSet.
+              // You can see its values below.
               var taskSet = new Jot.TaskSet();
               return taskSet;
             });
@@ -174,11 +184,12 @@
         var div = document.createElement('div');
         var task3 = notebook.createTask('.task3')
             .run(function () {
-              var task = taskSet.createTask(); // Create a task in the taskSet.
+              // Create a task in the taskSet.
+              var task = taskSet.createTask();
 
-              task.invade(div)     // Like before, we invade a new div.
+              task.invade(div)
                   .run(function () {
-                    // Set an attribute onto the context. We'll access it later.
+                    // Set an attribute onto 'this'. We'll access it later.
                     this.a = 'hello';
                     return false;
                   });
@@ -202,8 +213,11 @@
             .run(function () {
               taskSet.createTask(div) // Invasion shorthand.
                   .run(function () {
+                    // Access the attribute we set in the previous task.
                     this.a += ' world';
-                    return this.a; // This should print "hello world".
+
+                    // This should print "hello world".
+                    return this.a;
                   });
 
               return div; // boilerplate
@@ -226,10 +240,12 @@
               taskSet.createTask(div)
                   .run(function () {
                     this.a += ' :)';
+
+                    // This string will become a <b> element.
                     return '<b>' + this.a + '</b>';
                   });
 
-              return div; // Hey, that's what this is!
+              return div; // These tasks have been returning elements all along!
             });
 
         // Suppress prism.js for this output since it's an HTML Element.
@@ -253,8 +269,9 @@
               var task = new Jot.Task().invade(div);
               var jars = null;
 
-              // Setup the input without running.
+              // Setup the input without running by calling i.
               task.i(function () {
+                // This will fail if jars is not an array.
                 jars.push('pickles');
                 return jars;
               });
@@ -287,6 +304,7 @@
                     return cat;
                   });
 
+              // Calling o will return the output if the task has ran.
               return task.o();
             });
       </script>
@@ -303,8 +321,8 @@
                   oArea = document.createElement('textarea');
 
               var task = new Jot.Task()
-                  .into(iArea) // Input goes in the input textarea.
-                  .outo(oArea) // Output goes in the output textarea.
+                  .into(iArea) // Input will render in iArea.
+                  .outo(oArea) // Output will render in oArea.
                   .run(function () {
                     function sum (a, b) { return a + b; }
                     return sum(1, 2);
@@ -341,12 +359,16 @@
                       return snake_case.replace(/_/g, '-');
                     }
                     return snakeToKebab('s_s_s_snake');
-                  })
-                  .render(); // This will just render the input.
+                  });
+              
+              // Call render.
+              // This will render the task input (if it is set)
+              // and the output (if it is set) without running the task.
+              task.render();
 
               button.addEventListener('click', function () {
                 // Run the task when a user clicks the button.
-                // Running the task will re-render it, this time with the output.
+                // Running the task also calls render as you may have guessed.
                 task.run();
 
                 // Reinvoke Prism.js since we reset the innerHTML.
