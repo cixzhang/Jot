@@ -59,7 +59,7 @@
         into = this.into(),
         outo = this.outo();
 
-    outo.innerHTML = '';
+    if (outo) outo.innerHTML = '';
 
     if (typeof i !== 'undefined' && into) into.innerHTML = cleanInput(i);
 
@@ -67,7 +67,8 @@
       if (o instanceof Element) {
         outo.appendChild(o);
       } else {
-        if (!detectTags(o)) o = JSON.stringify(o);
+        if (o instanceof Error) o = o.toString();
+        else if (!detectTags(o)) o = JSON.stringify(o);
         outo.innerHTML = o;
       }
     }
