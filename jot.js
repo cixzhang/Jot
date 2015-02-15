@@ -5,9 +5,9 @@
 
   var Task = Jot.Task = function (context) {
     this.context = context || {};
-    this.props = {
-      i: null,
-      o: null,
+    this.props = this.props || {
+      i: undefined,
+      o: undefined,
       into: null,
       outo: null
     };
@@ -53,33 +53,53 @@
     return this;
   };
 
-  Task.prototype.run = function (newFn) {
-    if (newFn) this.i(newFn);
+  Task.prototype.render = function () {
     var i = this.i(),
+        o = this.o(),
         into = this.into(),
         outo = this.outo();
 
-    if (i) {
-      var output = this.props.o = tryCatch(i, this.context);
-      if (into) {
-        into.innerHTML = cleanInput(i);
-      }
-      if (outo) {
-        if (output instanceof Element) {
-          outo.innerHTML = '';
-          outo.appendChild(output);
-        } else {
-          if (!detectTags(output)) output = JSON.stringify(output);
-          outo.innerHTML = output;
-        }
+    outo.innerHTML = '';
+
+    if (typeof i !== 'undefined' && into) into.innerHTML = cleanInput(i);
+
+    if (typeof o !== 'undefined' && outo) {
+      if (o instanceof Element) {
+        outo.appendChild(o);
+      } else {
+        if (!detectTags(o)) o = JSON.stringify(o);
+        outo.innerHTML = o;
       }
     }
+
+    return this;
+  };
+
+  Task.prototype.run = function (newFn) {
+    if (newFn) this.i(newFn);
+    var i = this.i();
+
+    if (i) this.props.o = tryCatch(i, this.context);
+
+    this.render();
+    return this;
+  };
+
+  Task.prototype.reset = function () {
+    this.props.o = undefined;
     return this;
   };
 
   var TaskSet = Jot.TaskSet = function () {
     this.context = {};
     this.tasks = [];
+    return this;
+  };
+
+  TaskSet.prototype.addTask = function (task) {
+    Jot.Task.call(task, this.context);
+    this.tasks.push(task);
+
     return this;
   };
 
@@ -93,8 +113,18 @@
     return task;
   };
 
+  TaskSet.prototype.render = function () {
+    this.tasks.forEach(function (task) { task.render(); });
+    return this;
+  };
+
   TaskSet.prototype.run = function () {
     this.tasks.forEach(function (task) { task.run(); });
+    return this;
+  };
+
+  TaskSet.prototype.reset = function () {
+    this.tasks.forEach(function (task) { task.reset(); });
     return this;
   };
 
