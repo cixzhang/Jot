@@ -149,7 +149,7 @@
   }
 
   function cleanInput (input) {
-    var start = /^function[A-z\s]\([\s]*\)[\s]*\{\n*/, // Matches the beginning of a function "function xyz () {".
+    var start = /^function[A-z\s]*\([\s]*\)[\s]*\{\n*/, // Matches the beginning of a function "function xyz () {".
         end = /[\n\s]*\}$/, // Matches the end of a function " }".
         indent = /^[\s]+/, // Matches the first indentation.
         cleaned = escapeTags(input.toString());
