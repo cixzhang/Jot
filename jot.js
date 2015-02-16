@@ -21,7 +21,9 @@
   };
 
   Task.prototype.o = function (o) {
-    return this.props.o;
+    if (typeof o === 'undefined') return this.props.o;
+    this.props.o = o;
+    return this;
   };
 
   Task.prototype.into = function (el) {
@@ -80,7 +82,14 @@
     if (newFn) this.i(newFn);
     var i = this.i();
 
-    if (i) this.props.o = tryCatch(i, this.context);
+    if (i) {
+      var out = tryCatch(i, this.context);
+      if (out && (out instanceof Promise || out.then)) {
+        return out.then(this.o.bind(this))
+                  .then(this.render.bind(this));
+      }
+      this.o(out);
+    }
 
     this.render();
     return this;

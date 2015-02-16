@@ -132,12 +132,16 @@
       </div>
       <script type="text/javascript">
         var notebook = new Jot.TaskSet();
-        var div = document.createElement('div');
 
         var task1 = notebook.createTask('.task1')
             .run(function () {
               // Create a new task.
               var task = new Jot.Task();
+
+              // We create an Element for this task to render into.
+              // You don't have to create one; you can provide an existing
+              // element instead.
+              var div = document.createElement('div');
 
               // We provide the task a div (or any container).
               // The task will render its input and output into this div.
@@ -149,14 +153,15 @@
                 return 1;
               });
 
-              return div; // boilerplate for these examples
+              return div;
+              // Let's look at this div:
             });
 
         // Suppress prism.js for this output since it's an HTML Element.
         task1.outo().classList.add('language-none');
 
         // Add the language to the div so prism.js will parse it.
-        div.classList.add('language-javascript');
+        task1.o().classList.add('language-javascript');
       </script>
 
       <div class="task2">
@@ -164,7 +169,6 @@
       </div>
       <script type="text/javascript">
         var taskSet = null;
-        var div = document.createElement('div');
 
         var task2 = notebook.createTask('.task2')
             .run(function () {
@@ -174,16 +178,17 @@
               return taskSet;
             });
 
-        taskSet = task2.o(); // Grab that output!
+        taskSet = task2.o(); // Grab that output! Sneaky!
       </script>
 
       <div class="task3">
         <p>TaskSets are useful if you need to share context between tasks:</p>
       </div>
       <script type="text/javascript">
-        var div = document.createElement('div');
         var task3 = notebook.createTask('.task3')
             .run(function () {
+              var div = document.createElement('div');
+
               // Create a task in the taskSet.
               var task = taskSet.createTask();
 
@@ -194,23 +199,24 @@
                     return false;
                   });
 
-              return div; // boilerplate
+              return div;
             });
 
         // Suppress prism.js for this output since it's an HTML Element.
         task3.outo().classList.add('language-none');
 
         // Add the language to the div so prism.js will parse it.
-        div.classList.add('language-javascript');
+        task3.o().classList.add('language-javascript');
       </script>
 
       <div class="task4">
         <p>You can access an attribute set in previous tasks of the same taskSet:</p>
       </div>
       <script type="text/javascript">
-        var div = document.createElement('div');
         var task4 = notebook.createTask('.task4')
             .run(function () {
+              var div = document.createElement('div');
+
               taskSet.createTask(div) // Invasion shorthand.
                   .run(function () {
                     // Access the attribute we set in the previous task.
@@ -220,23 +226,24 @@
                     return this.a;
                   });
 
-              return div; // boilerplate
+              return div;
             });
 
         // Suppress prism.js for this output since it's an HTML Element.
         task4.outo().classList.add('language-none');
 
         // Add the language to the div so prism.js will parse it.
-        div.classList.add('language-javascript');
+        task4.o().classList.add('language-javascript');
       </script>
 
       <div class="task5">
         <p>You can also output HTML strings or Elements:</p>
       </div>
       <script type="text/javascript">
-        var div = document.createElement('div');
         var task5 = notebook.createTask('.task5')
             .run(function () {
+              var div = document.createElement('div');
+
               taskSet.createTask(div)
                   .run(function () {
                     this.a += ' :)';
@@ -252,10 +259,10 @@
         task5.outo().classList.add('language-none');
 
         // Add the language to the div so prism.js will parse it.
-        div.classList.add('language-javascript');
+        task5.o().classList.add('language-javascript');
 
         // And suppress it for the output's output.
-        div.getElementsByTagName('pre').item(1).classList.add('language-none');
+        task5.o().getElementsByTagName('pre').item(1).classList.add('language-none');
 
       </script>
 
@@ -263,9 +270,10 @@
         <p>Don't want to run right away? Setup input before running:</p>
       </div>
       <script type="text/javascript">
-        var div = document.createElement('div');
         var task6 = notebook.createTask('.task6')
             .run(function () {
+              var div = document.createElement('div');
+
               var task = new Jot.Task().invade(div);
               var jars = null;
 
@@ -288,7 +296,7 @@
         task6.outo().classList.add('language-none');
 
         // Add the language to the div so prism.js will parse it.
-        div.classList.add('language-javascript');
+        task6.o().classList.add('language-javascript');
       </script>
 
       <div class="task7">
@@ -434,6 +442,67 @@
 
         // Add the language to the div so prism.js will parse it.
         task10.o().classList.add('language-javascript');
+      </script>
+
+      <div class="task11">
+        <p>
+          Sometimes you want to create a task that makes an asynchronous call:
+        </p>
+      </div>
+      <script type="text/javascript">
+
+        var get = function (url) {
+          var xhr = new XMLHttpRequest();
+          var promise = new Promise(function (res, rej) {
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) res(xhr);
+                else rej(xhr);
+              }
+            };
+            xhr.open('GET', url);
+            xhr.send(null);
+          });
+          return promise;
+        };
+
+        var task11 = notebook.createTask('.task11')
+            .run(function () {
+              var div = document.createElement('div');
+
+              var task = new Jot.Task()
+                  .invade(div)
+                  .i(function () {
+                    var api = 'https://query.yahooapis.com/v1/public/yql?',
+                        q = 'select item.condition.text from weather.forecast ' +
+                            'where woeid = 2459115'; // Weather in New York.
+
+                    var query = 'q=' + encodeURIComponent(q) + '&format=json';
+
+                    // Return a Promise for async tasks.
+                    // See the source of this page for the get function code.
+                    return get(api + query).then(function (xhr) {
+                          var resp = JSON.parse(xhr.responseText);
+                          weather = resp.query.results.channel.item.condition.text;
+
+                          // The return value of the last 'then' will be the output.
+                          // The task will render after the Promise resolves.
+                          return 'The weather is ' + weather.toLowerCase() + '.';
+                        });
+                  });
+
+              // Normally, run will return the task, but since the task input
+              // returns a Promise, run will return the Promise for chaining.
+              task.run().then(function () { Prism.highlightAll(); });
+
+              return div;
+            });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task11.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        task11.o().classList.add('language-javascript');
       </script>
 
     </div>
