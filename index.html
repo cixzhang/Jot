@@ -483,7 +483,7 @@
                     // The task will render after the Promise resolves.
                     return get(api + query).then(function (xhr) {
                           var resp = JSON.parse(xhr.responseText);
-                          weather = resp.query.results.channel.item.condition.text;
+                          var weather = resp.query.results.channel.item.condition.text;
 
                           // The return value of the last 'then' will be the output.
                           return 'In NY, it is ' + weather.toLowerCase() + '.';
