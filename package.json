@@ -1,0 +1,16 @@
+{
+  "name": "jot",
+  "version": "0.1.0",
+  "description": "Display Javascript input and output inline with your HTML document.",
+  "main": "jot.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/cixzhang/Jot"
+  },
+  "devDependencies": {
+    "uglify-js": "^2.4.16"
+  },
+  "scripts": {
+    "build": "uglifyjs jot.js -m -o jot.min.js"
+  }
+}
