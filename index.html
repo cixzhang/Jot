@@ -506,6 +506,42 @@
         task11.o().classList.add('language-javascript');
       </script>
 
+      <div class="task12">
+        <p>Tasks can be expressed as function strings:</p>
+      </div>
+      <script type="text/javascript">
+        var task12 = notebook.createTask('.task12')
+            .run(function () {
+              // Creating a few containers.
+              var div = document.createElement('div'),
+                  iArea = document.createElement('textarea'),
+                  oArea = document.createElement('textarea');
+
+              var task = new Jot.Task()
+                  .into(iArea) // Input will render in iArea.
+                  .outo(oArea) // Output will render in oArea.
+                  .run('1 + 2');
+
+              iArea.addEventListener('change', function () {
+                // When the iArea's value changes, we'll update the task.
+                var newTask = this.value;
+                task.run(newTask);
+              });
+
+              div.appendChild(iArea);
+              div.appendChild(oArea);
+
+              // Try editing the iArea!
+              return div;
+            });
+
+        // Suppress prism.js for this output since it's an HTML Element.
+        task12.outo().classList.add('language-none');
+
+        // Add the language to the div so prism.js will parse it.
+        task12.o().classList.add('language-javascript');
+      </script>
+
     </div>
 
     <div class="thanks">

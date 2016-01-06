@@ -11,6 +11,6 @@
     "uglify-js": "^2.4.16"
   },
   "scripts": {
-    "build": "uglifyjs jot.js -m -o jot.min.js"
+    "prepublish": "uglifyjs jot.js -m -o jot.min.js"
   }
 }

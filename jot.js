@@ -16,8 +16,21 @@
 
   Task.prototype.i = function (fn) {
     if (typeof fn === 'undefined') return this.props.i;
-    this.props.i = fn;
+    if (typeof fn === 'function') {
+      this.props.i = fn;
+      this.props.iString = cleanInput(fn);
+    } else if (typeof fn === 'string') {
+      var contextualEval = this.eval;
+      this.props.iString = fn;
+      this.props.i = function () {
+        return contextualEval(fn);
+      };
+    }
     return this;
+  };
+
+  Task.prototype.iString = function () {
+    return this.props.iString;
   };
 
   Task.prototype.o = function (o) {
@@ -38,6 +51,10 @@
     return this;
   };
 
+  Task.prototype.eval = function (str) {
+    return eval(str);
+  };
+
   Task.prototype.invade = function (el) {
     var container = getElement(el);
     if (container) {
@@ -56,14 +73,14 @@
   };
 
   Task.prototype.render = function () {
-    var i = this.i(),
+    var iString = this.iString(),
         o = this.o(),
         into = this.into(),
         outo = this.outo();
 
     if (outo) outo.innerHTML = '';
 
-    if (typeof i !== 'undefined' && into) into.innerHTML = cleanInput(i);
+    if (typeof iString !== 'undefined' && into) into.innerHTML = iString;
 
     if (typeof o !== 'undefined' && outo) {
       if (o instanceof Element) {
