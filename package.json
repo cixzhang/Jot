@@ -7,10 +7,13 @@
     "type": "git",
     "url": "http://github.com/cixzhang/Jot"
   },
-  "devDependencies": {
-    "uglify-js": "^2.4.16"
-  },
   "scripts": {
-    "prepublish": "uglifyjs jot.js -m -o jot.min.js"
+    "prepublish": "uglifyjs jot.js -m -o jot.min.js",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "uglify-js": "^2.4.16"
   }
 }
