@@ -9,7 +9,8 @@
       i: undefined,
       o: undefined,
       into: null,
-      outo: null
+      outo: null,
+      iString: null
     };
     return this;
   };
